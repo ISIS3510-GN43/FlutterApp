@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../viewmodels/auth_viewmodel.dart';
 
+import 'friends_screen.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -23,9 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login exitoso')),
-      );
+      final userId = _authViewModel.usuarioActual!.id;
+      Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FriendsScreen(userId: userId),
+            ),);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(_authViewModel.errorMessage)),
