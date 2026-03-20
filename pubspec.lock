@@ -153,7 +153,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
->>>>>>> 9e1b20487bfbb05f992a0e8c41cd1d2fe92ed116
   flutter:
     dependency: "direct main"
     description: flutter
@@ -337,7 +336,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
->>>>>>> 9e1b20487bfbb05f992a0e8c41cd1d2fe92ed116
   path:
     dependency: transitive
     description:
@@ -495,7 +493,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.3"
->>>>>>> 9e1b20487bfbb05f992a0e8c41cd1d2fe92ed116
   vector_math:
     dependency: transitive
     description:
