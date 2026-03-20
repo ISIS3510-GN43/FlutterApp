@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/usuario.dart';
+import '../services/location_email_service.dart';
 
 class FriendDetailScreen extends StatelessWidget {
   final Usuario friend;
@@ -18,6 +19,33 @@ class FriendDetailScreen extends StatelessWidget {
     const Color white = Color(0xFFF0EDEE);
     const Color currant = Color(0xFF2C666E);
     const Color blue = Color(0xFF90DDF0);
+
+    final locationEmailService = LocationEmailService();
+
+    Future<void> sendMyLocation() async {
+      try {
+        await locationEmailService.sendLocationByEmail(
+          toEmail: friend.gmail,
+          friendUsername: friend.username,
+        );
+
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email app opened successfully'),
+          ),
+        );
+      } catch (e) {
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
+    }
 
     return Scaffold(
       backgroundColor: white,
@@ -60,7 +88,7 @@ class FriendDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: sendMyLocation,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: currant,
                       foregroundColor: Colors.white,
@@ -70,9 +98,9 @@ class FriendDetailScreen extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
+                    child: const Text(
                       'Send my location',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),

@@ -34,15 +34,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
     super.dispose();
   }
 
-  void _onBottomNavTap(int index) {
-    if (index == 1) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('This section is not available yet'),
-      ),
-    );
-  }
 
   void _onAddPressed() {
     ScaffoldMessenger.of(context).showSnackBar(
