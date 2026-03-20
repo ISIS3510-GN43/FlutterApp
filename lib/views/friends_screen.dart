@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../models/usuario.dart';
 import '../viewmodels/friends_viewmodel.dart';
+import '../viewmodels/home_schedule_viewmodel.dart';
 import '../widgets/app_nav.dart';
+import 'calendar_view.dart';
 
 class FriendsScreen extends StatefulWidget {
   final String userId;
@@ -103,7 +105,19 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ),
           bottomNavigationBar: AppBottomNav(
             currentIndex: 1,
-            onTap: _onBottomNavTap,
+            onTap: (index) {
+              if (index == 0) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CalendarView(
+                      userId: widget.userId,
+                      viewModel: HomeScheduleViewModel(userId: widget.userId),
+                    ),
+                  )
+                );
+              }
+            },
           ),
         );
       },
