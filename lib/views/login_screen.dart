@@ -1,8 +1,9 @@
+import 'package:app_flutter/views/calendar_view.dart';
 import 'package:flutter/material.dart';
 
 import '../viewmodels/auth_viewmodel.dart';
 
-import 'friends_screen.dart';
+import '../viewmodels/home_schedule_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,8 +30,16 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => FriendsScreen(userId: userId),
-            ),);
+              builder: (_) => CalendarView(
+                viewModel: HomeScheduleViewModel(userId: userId),
+                userId: userId,
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {},
+                  child: const Icon(Icons.add),
+                ),
+              ),
+            )
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(_authViewModel.errorMessage)),
