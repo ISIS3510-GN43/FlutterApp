@@ -6,6 +6,7 @@ import '../viewmodels/home_schedule_viewmodel.dart';
 import '../widgets/app_nav.dart';
 import 'calendar_view.dart';
 import 'friend_detail_screen.dart';
+import 'requests_screen.dart';
 
 class FriendsScreen extends StatefulWidget {
   final String userId;
@@ -34,13 +35,17 @@ class _FriendsScreenState extends State<FriendsScreen> {
     super.dispose();
   }
 
-
-  void _onAddPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Add friend coming soon'),
+  Future<void> _openRequestsScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RequestsScreen(userId: widget.userId),
       ),
     );
+
+    if (result == true) {
+      await _viewModel.loadFriends(widget.userId);
+    }
   }
 
   @override
@@ -72,7 +77,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: IconButton(
-                  onPressed: _onAddPressed,
+                  onPressed: _openRequestsScreen,
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
