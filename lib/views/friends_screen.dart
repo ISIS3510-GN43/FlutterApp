@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/usuario.dart';
 import '../viewmodels/friends_viewmodel.dart';
 import '../widgets/app_nav.dart';
+import 'friend_detail_screen.dart';
 
 class FriendsScreen extends StatefulWidget {
   final String userId;
@@ -191,9 +192,22 @@ class _FriendsScreenState extends State<FriendsScreen> {
         final friend = _viewModel.friends[index];
         final isAvailable = _viewModel.isFriendAvailable(friend);
 
-        return _FriendCard(
-          friend: friend,
-          isAvailable: isAvailable,
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FriendDetailScreen(
+                  friend: friend,
+                  isAvailable: isAvailable,
+                ),
+              ),
+            );
+          },
+          child: _FriendCard(
+            friend: friend,
+            isAvailable: isAvailable,
+          ),
         );
       },
     );
