@@ -6,7 +6,7 @@ class Horario {
   String titulo;
   Dia? primerDia;
   Dia? ultimoDia;
-  String fondoPantalla;
+  String? fondoPantalla;
   List<Materia> clases;
   bool activo;
 
