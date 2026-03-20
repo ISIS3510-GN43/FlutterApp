@@ -5,6 +5,7 @@ import '../viewmodels/friends_viewmodel.dart';
 import '../viewmodels/home_schedule_viewmodel.dart';
 import '../widgets/app_nav.dart';
 import 'calendar_view.dart';
+import 'friend_detail_screen.dart';
 
 class FriendsScreen extends StatefulWidget {
   final String userId;
@@ -33,15 +34,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
     super.dispose();
   }
 
-  void _onBottomNavTap(int index) {
-    if (index == 1) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('This section is not available yet'),
-      ),
-    );
-  }
 
   void _onAddPressed() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -205,9 +197,22 @@ class _FriendsScreenState extends State<FriendsScreen> {
         final friend = _viewModel.friends[index];
         final isAvailable = _viewModel.isFriendAvailable(friend);
 
-        return _FriendCard(
-          friend: friend,
-          isAvailable: isAvailable,
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FriendDetailScreen(
+                  friend: friend,
+                  isAvailable: isAvailable,
+                ),
+              ),
+            );
+          },
+          child: _FriendCard(
+            friend: friend,
+            isAvailable: isAvailable,
+          ),
         );
       },
     );
