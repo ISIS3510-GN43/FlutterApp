@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-
+import '../viewmodels/friend_schedule_viewmodel.dart';
+import 'calendar_view.dart';
 import '../models/usuario.dart';
 import '../services/location_email_service.dart';
 
 class FriendDetailScreen extends StatelessWidget {
   final Usuario friend;
   final bool isAvailable;
+  final String currentUserId;
 
   const FriendDetailScreen({
     super.key,
     required this.friend,
     required this.isAvailable,
+    required this.currentUserId,
   });
 
   @override
@@ -111,7 +114,18 @@ class FriendDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CalendarView(
+                            userId: currentUserId,
+                            title: '${friend.username}\'s Schedule',
+                            viewModel: FriendScheduleViewModel(friendId: friend.id),
+                          ),
+                        ),
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: currant,
                       side: const BorderSide(color: currant, width: 1.5),
