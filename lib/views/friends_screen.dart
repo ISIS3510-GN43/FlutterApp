@@ -248,7 +248,7 @@ class _FriendCard extends StatelessWidget {
         border: Border.all(color: white),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -258,7 +258,7 @@ class _FriendCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 26,
-            backgroundColor: currant.withOpacity(0.15),
+            backgroundColor: currant.withValues(alpha: 0.15),
             backgroundImage:
                 friend.foto.isNotEmpty ? NetworkImage(friend.foto) : null,
             child: friend.foto.isEmpty
@@ -280,8 +280,8 @@ class _FriendCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
               color: isAvailable
-                  ? Colors.green.withOpacity(0.10)
-                  : Colors.red.withOpacity(0.10),
+                  ? Colors.green.withValues(alpha: 0.10)
+                  : Colors.red.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(

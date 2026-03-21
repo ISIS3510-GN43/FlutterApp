@@ -90,16 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 30),
-                Image.asset(
-                  'assets/images/login_group_people.png',
-                  height: 150,
-                ),
                 const SizedBox(height: 40),
                 TextField(
                   controller: _emailController,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: 'Correo electrónico',
+                    hintText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -111,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: 'Contraseña',
+                    hintText: 'Password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -131,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 22,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Iniciar sesión'),
+                      : const Text('Login'),
                 ),
               ],
             ),
