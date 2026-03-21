@@ -210,7 +210,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                 builder: (_) => FriendDetailScreen(
                   friend: friend,
                   isAvailable: isAvailable,
-                  currentUserId: widget.userId,
+                  userId: widget.userId,
                 ),
               ),
             );

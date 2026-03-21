@@ -156,7 +156,7 @@ class FriendDetailScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => CalendarView(
-                            userId: currentUserId,
+                            userId: userId,
                             title: '${friend.username}\'s Schedule',
                             viewModel: FriendScheduleViewModel(friendId: friend.id),
                           ),
