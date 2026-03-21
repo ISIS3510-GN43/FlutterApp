@@ -57,7 +57,7 @@ class FriendDetailScreen extends StatelessWidget {
 
         // POST al webhook de n8n
         final response = await http.post(
-          Uri.parse('https://automation.luminotest.com/webhook-test/email-location'),
+          Uri.parse('https://automation.luminotest.com/webhook/email-location'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'to': friend.gmail,
