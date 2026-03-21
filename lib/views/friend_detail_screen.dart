@@ -1,16 +1,21 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
+import '../config/constants.dart';
 import '../models/usuario.dart';
-import '../services/location_email_service.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
 class FriendDetailScreen extends StatelessWidget {
   final Usuario friend;
   final bool isAvailable;
+  final String userId;
 
   const FriendDetailScreen({
     super.key,
     required this.friend,
     required this.isAvailable,
+    required this.userId,
   });
 
   @override
@@ -20,29 +25,63 @@ class FriendDetailScreen extends StatelessWidget {
     const Color currant = Color(0xFF2C666E);
     const Color blue = Color(0xFF90DDF0);
 
-    final locationEmailService = LocationEmailService();
-
     Future<void> sendMyLocation() async {
       try {
-        await locationEmailService.sendLocationByEmail(
-          toEmail: friend.gmail,
-          friendUsername: friend.username,
+        final userResponse = await http.get(
+          Uri.parse('${Config.baseUrl}/usuarios/$userId'),
+          headers: {'Content-Type': 'application/json'},
+        );
+        if (userResponse.statusCode != 200) {
+          throw Exception('Could not fetch user data.');
+        }
+        final currentUsername = jsonDecode(userResponse.body)['username'] as String;
+        // Permisos
+        if (!await Geolocator.isLocationServiceEnabled()) {
+          throw Exception('Location services are disabled.');
+        }
+        var permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+        }
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          throw Exception('Location permission denied.');
+        }
+
+        // Ubicación
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+
+        final mapsLink = 'https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}';
+
+        // POST al webhook de n8n
+        final response = await http.post(
+          Uri.parse('https://automation.luminotest.com/webhook-test/email-location'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'to': friend.gmail,
+            'name': friend.username,
+            'from': currentUsername,
+            'mapsLink': mapsLink,
+          }),
         );
 
         if (!context.mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Email app opened successfully'),
-          ),
-        );
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Email sent successfully!')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to send email. Try again.')),
+          );
+        }
       } catch (e) {
         if (!context.mounted) return;
-
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
-          ),
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
         );
       }
     }
