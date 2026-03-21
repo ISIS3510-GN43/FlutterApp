@@ -10,13 +10,13 @@ import 'package:http/http.dart' as http;
 class FriendDetailScreen extends StatelessWidget {
   final Usuario friend;
   final bool isAvailable;
-  final String currentUserId;
+  final String userId;
 
   const FriendDetailScreen({
     super.key,
     required this.friend,
     required this.isAvailable,
-    required this.currentUserId,
+    required this.userId,
   });
 
   @override
