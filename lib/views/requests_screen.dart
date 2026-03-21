@@ -135,6 +135,9 @@ class _RequestsScreenState extends State<RequestsScreen> {
                           user: _viewModel.searchedUser!,
                           isSending: _viewModel.isSendingRequest,
                           onSend: () async {
+                            final navigator = Navigator.of(context);
+                            final messenger = ScaffoldMessenger.of(context);
+
                             final success = await _viewModel.sendFriendRequest(
                               targetUserId: _viewModel.searchedUser!.id,
                               senderUserId: widget.userId,
@@ -143,21 +146,15 @@ class _RequestsScreenState extends State<RequestsScreen> {
                             if (!mounted) return;
 
                             if (success) {
-                              Navigator.pop(dialogContext);
+                              navigator.pop();
                               await _viewModel.loadRequests(widget.userId);
-
                               if (!mounted) return;
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Request sent successfully'),
-                                ),
+                              messenger.showSnackBar(
+                                const SnackBar(content: Text('Request sent successfully')),
                               );
                             } else if (_viewModel.searchMessage.isNotEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(_viewModel.searchMessage),
-                                ),
+                              messenger.showSnackBar(
+                                SnackBar(content: Text(_viewModel.searchMessage)),
                               );
                             }
                           },
@@ -301,7 +298,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                 width: 110,
                 height: 110,
                 decoration: BoxDecoration(
-                  color: blue.withOpacity(0.25),
+                  color: blue.withValues(alpha: 0.25),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -326,7 +323,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
-                  color: night.withOpacity(0.65),
+                  color: night.withValues(alpha: 0.65),
                 ),
               ),
             ],
@@ -377,7 +374,7 @@ class _RequestCard extends StatelessWidget {
         border: Border.all(color: white),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -387,7 +384,7 @@ class _RequestCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: currant.withOpacity(0.15),
+            backgroundColor: currant.withValues(alpha: 0.15),
             backgroundImage:
                 user.foto.isNotEmpty ? NetworkImage(user.foto) : null,
             child: user.foto.isEmpty
@@ -458,7 +455,7 @@ class _SearchResultCard extends StatelessWidget {
         border: Border.all(color: white),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -468,7 +465,7 @@ class _SearchResultCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: currant.withOpacity(0.15),
+            backgroundColor: currant.withValues(alpha: 0.15),
             backgroundImage: user.foto.isNotEmpty ? NetworkImage(user.foto) : null,
             child: user.foto.isEmpty
                 ? const Icon(Icons.person, color: currant)

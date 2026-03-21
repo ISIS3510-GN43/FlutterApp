@@ -9,13 +9,15 @@ class CalendarView extends StatefulWidget {
   final Widget? floatingActionButton;
   final String userId;
   final String title;
+  final bool showBottomNav;
 
   const CalendarView({
     super.key,
     required this.viewModel,
     this.floatingActionButton,
     required this.userId,
-    this.title = 'Mi Horario',
+    this.title = 'My Schedule',
+    this.showBottomNav = true,
   });
 
   @override
@@ -27,7 +29,7 @@ class _CalendarViewState extends State<CalendarView> {
     Dia.lunes, Dia.martes, Dia.miercoles, Dia.jueves, Dia.viernes,
   ];
   static const List<String> _diasLabels = [
-    'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES',
+    'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THRUSDAY', 'FRIDAY',
   ];
   static const int _startHour = 6;
   static const int _endHour = 18;
@@ -69,19 +71,21 @@ class _CalendarViewState extends State<CalendarView> {
                   ? Center(child: Text(widget.viewModel.errorMessage))
                   : _buildCalendar(),
           floatingActionButton: widget.floatingActionButton,
-          bottomNavigationBar: AppBottomNav(
-            currentIndex: 0,
-            onTap: (index) {
-              if (index == 1) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FriendsScreen(userId: widget.userId),
-                  ),
-                );
-              }
-            },
-          ),
+          bottomNavigationBar: widget.showBottomNav
+            ? AppBottomNav(
+                currentIndex: 0,
+                onTap: (index) {
+                  if (index == 1) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FriendsScreen(userId: widget.userId),
+                      ),
+                    );
+                  }
+                },
+              )
+            : null,
         );
       },
     );
@@ -173,7 +177,6 @@ class _CalendarViewState extends State<CalendarView> {
             );
           }),
 
-          // Bloques de materia
           ..._buildMateriaBlocks(),
         ],
       ),

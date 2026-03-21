@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../repositories/schedule_repository.dart';
 import '../viewmodels/friend_schedule_viewmodel.dart';
+import '../viewmodels/match_schedule_viewmodel.dart';
 import 'calendar_view.dart';
 import '../config/constants.dart';
 import '../models/usuario.dart';
@@ -51,9 +53,10 @@ class FriendDetailScreen extends StatelessWidget {
 
         // Ubicación
         final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
         );
-
         final mapsLink = 'https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}';
 
         // POST al webhook de n8n
@@ -103,7 +106,7 @@ class FriendDetailScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 70,
-                  backgroundColor: blue.withOpacity(0.25),
+                  backgroundColor: blue.withValues(alpha: 0.25),
                   backgroundImage:
                       friend.foto.isNotEmpty ? NetworkImage(friend.foto) : null,
                   child: friend.foto.isEmpty
@@ -152,13 +155,52 @@ class FriendDetailScreen extends StatelessWidget {
                   width: double.infinity,
                   child: OutlinedButton(
                     onPressed: () {
+                      final friendVm = FriendScheduleViewModel(friendId: friend.id);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => CalendarView(
                             userId: userId,
                             title: '${friend.username}\'s Schedule',
-                            viewModel: FriendScheduleViewModel(friendId: friend.id),
+                            viewModel: friendVm,
+                            showBottomNav: false,
+                            floatingActionButton: Builder(
+                              builder: (ctx) => FloatingActionButton(
+                                backgroundColor: const Color(0xFF2C666E),
+                                onPressed: () async {
+                                  final friendHorarioId = friendVm.horarioId;
+                                  if (friendHorarioId.isEmpty) {
+                                    ScaffoldMessenger.of(ctx).showSnackBar(
+                                      const SnackBar(content: Text('El horario aún no está cargado.')),
+                                    );
+                                    return;
+                                  }
+                                  try {
+                                    final myHorario = await ScheduleRepository().getActiveSchedule(userId);
+                                    if (!ctx.mounted) return;
+                                    Navigator.of(ctx).push(MaterialPageRoute(
+                                      builder: (_) => CalendarView(
+                                        userId: userId,
+                                        title: 'Match Schedule',
+                                        viewModel: MatchScheduleViewModel(
+                                          userId: userId,
+                                          friendId: friend.id,
+                                          horario1Id: myHorario.id,
+                                          horario2Id: friendHorarioId,
+                                        ),
+                                        showBottomNav: false,
+                                      ),
+                                    ));
+                                  } catch (e) {
+                                    if (!ctx.mounted) return;
+                                    ScaffoldMessenger.of(ctx).showSnackBar(
+                                      SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+                                    );
+                                  }
+                                },
+                                child: const Icon(Icons.compare_arrows_rounded, color: Colors.white),
+                              ),
+                            ),
                           ),
                         ),
                       );
