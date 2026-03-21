@@ -8,12 +8,14 @@ class CalendarView extends StatefulWidget {
   final ScheduleViewModel viewModel;
   final Widget? floatingActionButton;
   final String userId;
+  final String title;
 
   const CalendarView({
     super.key,
     required this.viewModel,
     this.floatingActionButton,
     required this.userId,
+    this.title = 'Mi Horario',
   });
 
   @override
@@ -52,9 +54,9 @@ class _CalendarViewState extends State<CalendarView> {
             backgroundColor: white,
             elevation: 0,
             centerTitle: false,
-            title: const Text(
-              'Mi Horario',
-              style: TextStyle(
+            title: Text(
+              widget.title,
+              style: const TextStyle(
                 color: night,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-
+import '../viewmodels/friend_schedule_viewmodel.dart';
+import 'calendar_view.dart';
 import '../config/constants.dart';
 import '../models/usuario.dart';
 import 'package:geolocator/geolocator.dart';
@@ -150,7 +151,18 @@ class FriendDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CalendarView(
+                            userId: userId,
+                            title: '${friend.username}\'s Schedule',
+                            viewModel: FriendScheduleViewModel(friendId: friend.id),
+                          ),
+                        ),
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: currant,
                       side: const BorderSide(color: currant, width: 1.5),
