@@ -102,8 +102,8 @@ class RequestsRepository {
       headers: {'Content-Type': 'application/json'},
     );
 
-    if (response.statusCode < 200) {
-      throw Exception('No se pudo enviar la solicitud.');
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(jsonDecode(response.body)['message'] ?? 'No se pudo enviar la solicitud.');
     }
   }
   
