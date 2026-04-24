@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/dia.dart';
 import '../viewmodels/schedule_viewmodel.dart';
 import 'app_nav.dart';
-import 'friends_screen.dart';
 
 class CalendarView extends StatefulWidget {
   final ScheduleViewModel viewModel;
@@ -10,6 +9,8 @@ class CalendarView extends StatefulWidget {
   final String userId;
   final String title;
   final bool showBottomNav;
+  final int navCurrentIndex;
+  final ValueChanged<int>? onNavTap;
 
   const CalendarView({
     super.key,
@@ -18,6 +19,8 @@ class CalendarView extends StatefulWidget {
     required this.userId,
     this.title = 'My Schedule',
     this.showBottomNav = true,
+    this.navCurrentIndex = 0,
+    this.onNavTap,
   });
 
   @override
@@ -73,17 +76,8 @@ class _CalendarViewState extends State<CalendarView> {
           floatingActionButton: widget.floatingActionButton,
           bottomNavigationBar: widget.showBottomNav
             ? AppBottomNav(
-                currentIndex: 0,
-                onTap: (index) {
-                  if (index == 1) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => FriendsScreen(userId: widget.userId),
-                      ),
-                    );
-                  }
-                },
+                currentIndex: widget.navCurrentIndex,
+                onTap: widget.onNavTap,
               )
             : null,
         );

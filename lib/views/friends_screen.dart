@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../models/usuario.dart';
 import '../viewmodels/friends_viewmodel.dart';
-import '../viewmodels/home_schedule_viewmodel.dart';
-import 'app_nav.dart';
-import 'calendar_view.dart';
 import 'friend_detail_screen.dart';
 import 'requests_screen.dart';
 
 class FriendsScreen extends StatefulWidget {
   final String userId;
+  final ValueChanged<int>? onTabSwitch;
 
   const FriendsScreen({
     super.key,
     required this.userId,
+    this.onTabSwitch,
   });
 
   @override
@@ -99,22 +98,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
             green: green,
             currant: currant,
             blue: blue,
-          ),
-          bottomNavigationBar: AppBottomNav(
-            currentIndex: 1,
-            onTap: (index) {
-              if (index == 0) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CalendarView(
-                      userId: widget.userId,
-                      viewModel: HomeScheduleViewModel(userId: widget.userId),
-                    ),
-                  )
-                );
-              }
-            },
           ),
         );
       },
@@ -211,6 +194,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   friend: friend,
                   isAvailable: isAvailable,
                   userId: widget.userId,
+                  onTabSwitch: widget.onTabSwitch,
                 ),
               ),
             );
