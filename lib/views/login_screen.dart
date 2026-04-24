@@ -1,9 +1,11 @@
 import 'package:app_flutter/views/calendar_view.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../viewmodels/auth_viewmodel.dart';
-
 import '../viewmodels/home_schedule_viewmodel.dart';
+import 'friends_screen.dart';
+import 'app_nav.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,18 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success) {
       final userId = _authViewModel.usuarioActual!.id;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userId', userId);
+      if (!mounted) return;
       Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CalendarView(
-                viewModel: HomeScheduleViewModel(userId: userId),
-                userId: userId,
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () {},
-                  child: const Icon(Icons.add),
-                ),
-              ),
-            )
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainShell(userId: userId),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -134,6 +132,49 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class MainShell extends StatefulWidget {
+  final String userId;
+
+  const MainShell({super.key, required this.userId});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  int _currentIndex = 0;
+  late final HomeScheduleViewModel _scheduleViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleViewModel = HomeScheduleViewModel(userId: widget.userId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          CalendarView(
+            userId: widget.userId,
+            viewModel: _scheduleViewModel,
+            showBottomNav: false,
+          ),
+          FriendsScreen(userId: widget.userId),
+        ],
+      ),
+      bottomNavigationBar: AppBottomNav(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+        },
+      ),
     );
   }
 }

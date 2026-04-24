@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/usuario.dart';
-import '../repositories/requests_repository.dart';
+import '../models/repositories/requests_repository.dart';
 
 class RequestsViewModel extends ChangeNotifier {
   final RequestsRepository _repository;

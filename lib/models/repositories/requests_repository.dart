@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../config/constants.dart';
-import '../models/usuario.dart';
+import '../../config/constants.dart';
+import '../usuario.dart';
 
 class RequestsRepository {
   Future<List<Usuario>> getRequests(String userId) async {
@@ -102,8 +102,8 @@ class RequestsRepository {
       headers: {'Content-Type': 'application/json'},
     );
 
-    if (response.statusCode < 200) {
-      throw Exception('No se pudo enviar la solicitud.');
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(jsonDecode(response.body)['message'] ?? 'No se pudo enviar la solicitud.');
     }
   }
   

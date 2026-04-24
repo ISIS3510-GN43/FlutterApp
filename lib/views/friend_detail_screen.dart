@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../repositories/schedule_repository.dart';
+import '../models/repositories/schedule_repository.dart';
 import '../viewmodels/friend_schedule_viewmodel.dart';
 import '../viewmodels/match_schedule_viewmodel.dart';
 import 'calendar_view.dart';
 import '../config/constants.dart';
 import '../models/usuario.dart';
+import 'app_nav.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,12 +14,14 @@ class FriendDetailScreen extends StatelessWidget {
   final Usuario friend;
   final bool isAvailable;
   final String userId;
+  final ValueChanged<int>? onTabSwitch;
 
   const FriendDetailScreen({
     super.key,
     required this.friend,
     required this.isAvailable,
     required this.userId,
+    this.onTabSwitch,
   });
 
   @override
@@ -163,7 +166,12 @@ class FriendDetailScreen extends StatelessWidget {
                             userId: userId,
                             title: '${friend.username}\'s Schedule',
                             viewModel: friendVm,
-                            showBottomNav: false,
+                            showBottomNav: true,
+                            navCurrentIndex: 1,
+                            onNavTap: (index) {
+                              Navigator.popUntil(context, (route) => route.isFirst);
+                              onTabSwitch?.call(index);
+                            },
                             floatingActionButton: Builder(
                               builder: (ctx) => FloatingActionButton(
                                 backgroundColor: const Color(0xFF2C666E),
@@ -226,6 +234,13 @@ class FriendDetailScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: AppBottomNav(
+        currentIndex: 1,
+        onTap: (index) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          onTabSwitch?.call(index);
+        },
       ),
     );
   }

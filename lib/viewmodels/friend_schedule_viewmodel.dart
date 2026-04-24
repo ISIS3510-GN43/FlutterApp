@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/materia.dart';
-import '../repositories/friend_schedule_repository.dart';
+import '../models/repositories/friend_schedule_repository.dart';
 import 'schedule_viewmodel.dart';
 
 class FriendScheduleViewModel extends ScheduleViewModel {

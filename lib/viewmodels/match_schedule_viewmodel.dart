@@ -1,5 +1,5 @@
 import '../models/materia.dart';
-import '../repositories/match_repository.dart';
+import '../models/repositories/match_repository.dart';
 import 'schedule_viewmodel.dart';
 
 class MatchScheduleViewModel extends ScheduleViewModel {

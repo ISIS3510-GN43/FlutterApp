@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:http/http.dart' as http;
 
-import '../config/constants.dart';
-import '../models/usuario.dart';
+import '../../config/constants.dart';
+import '../usuario.dart';
 
 class AuthRepository {
   final fb_auth.FirebaseAuth _firebaseAuth = fb_auth.FirebaseAuth.instance;
