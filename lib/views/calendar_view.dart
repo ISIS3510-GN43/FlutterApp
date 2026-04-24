@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/dia.dart';
 import '../viewmodels/schedule_viewmodel.dart';
-import '../widgets/app_nav.dart';
+import 'app_nav.dart';
 import 'friends_screen.dart';
 
 class CalendarView extends StatefulWidget {

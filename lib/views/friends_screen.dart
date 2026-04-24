@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/usuario.dart';
 import '../viewmodels/friends_viewmodel.dart';
 import '../viewmodels/home_schedule_viewmodel.dart';
-import '../widgets/app_nav.dart';
+import 'app_nav.dart';
 import 'calendar_view.dart';
 import 'friend_detail_screen.dart';
 import 'requests_screen.dart';

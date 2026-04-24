@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../repositories/schedule_repository.dart';
+import '../models/repositories/schedule_repository.dart';
 import '../viewmodels/friend_schedule_viewmodel.dart';
 import '../viewmodels/match_schedule_viewmodel.dart';
 import 'calendar_view.dart';

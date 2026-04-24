@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../config/constants.dart';
-import '../models/usuario.dart';
+import '../../config/constants.dart';
+import '../usuario.dart';
 
 class RequestsRepository {
   Future<List<Usuario>> getRequests(String userId) async {

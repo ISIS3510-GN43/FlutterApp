@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../config/constants.dart';
-import '../models/horario.dart';
+import '../../config/constants.dart';
+import '../horario.dart';
 
 class MatchScheduleRepository {
   Future<Horario> getMatchActiveSchedule(String friendId, String userId, String horario1Id, String horario2Id) async {
