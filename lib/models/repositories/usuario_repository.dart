@@ -6,8 +6,6 @@ import 'package:http/http.dart' as http;
 import '../../config/constants.dart';
 import '../usuario.dart';
 
-/// Thrown when the backend accepted the photo URL (2xx) but didn't return
-/// a full Usuario object. The caller can use [url] to update locally.
 class PhotoUrlResult implements Exception {
   final String url;
   PhotoUrlResult(this.url);

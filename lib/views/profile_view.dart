@@ -42,7 +42,6 @@ class _ProfileViewState extends State<ProfileView> {
     setState(() => _uploading = true);
     try {
       final updated = await _repo.cambiarFoto(_usuario.id, File(picked.path));
-      // Evict old entry from LRU cache so next paint fetches the new image
       if (_usuario.foto.isNotEmpty) {
         await ProfileImageCacheManager().removeFile(_usuario.foto);
       }
@@ -52,7 +51,6 @@ class _ProfileViewState extends State<ProfileView> {
         _uploading = false;
       });
     } on PhotoUrlResult catch (e) {
-      // Backend 2xx but didn't return full Usuario — update foto field locally
       if (_usuario.foto.isNotEmpty) {
         await ProfileImageCacheManager().removeFile(_usuario.foto);
       }
