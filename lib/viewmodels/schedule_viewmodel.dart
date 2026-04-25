@@ -6,5 +6,8 @@ abstract class ScheduleViewModel extends ChangeNotifier {
   String get errorMessage;
   List<Materia> get materias;
 
+  bool get isUsingCachedData => false;
+  String get insightMessage => '';
+
   Future<void> loadSchedule();
 }
