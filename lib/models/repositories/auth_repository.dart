@@ -53,6 +53,20 @@ class AuthRepository {
     }
   }
 
+  Future<Usuario> fetchUsuario(String uid) async {
+    final response = await http.get(
+      Uri.parse('${Config.baseUrl}/usuarios/$uid'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return Usuario.fromJson(data);
+    } else {
+      throw Exception('No se pudo obtener el usuario.');
+    }
+  }
+
   Future<void> logout() async {
     await _firebaseAuth.signOut();
   }
