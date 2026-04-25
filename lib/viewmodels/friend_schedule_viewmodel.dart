@@ -16,6 +16,8 @@ class FriendScheduleViewModel extends ScheduleViewModel {
   static const double _targetMs = 1.0;
   static const String _webhookUrl = 'https://automation.luminotest.com/webhook/time-bq';
 
+  bool _isUsingCachedData = false;
+
   FriendScheduleViewModel({
     required this.friendId,
     FriendScheduleRepository? repository,
@@ -25,6 +27,9 @@ class FriendScheduleViewModel extends ScheduleViewModel {
   String _errorMessage = '';
   List<Materia> _materias = [];
   String _horarioId = '';
+
+  @override
+  bool get isUsingCachedData => _isUsingCachedData;
 
   @override
   bool get isLoading => _isLoading;
@@ -41,14 +46,19 @@ class FriendScheduleViewModel extends ScheduleViewModel {
   Future<void> loadSchedule() async {
     _isLoading = true;
     _errorMessage = '';
+    _isUsingCachedData = false;
     notifyListeners();
 
+    
     final time = Stopwatch()..start();
 
     try {
-      final horario = await _repository.getFriendActiveSchedule(friendId);
+      final result = await _repository.getFriendActiveScheduleWithCache(friendId);
+      final horario = result.horario;
+
       _horarioId = horario.id;
       _materias = horario.clases;
+      _isUsingCachedData = result.isFromCache;
     } catch (e) {
       _errorMessage = e.toString().replaceFirst('Exception: ', '');
     } finally {
