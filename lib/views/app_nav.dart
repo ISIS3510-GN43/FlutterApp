@@ -47,9 +47,9 @@ class AppBottomNav extends StatelessWidget {
           label: 'Grades',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.place_outlined),
-          activeIcon: Icon(Icons.place),
-          label: 'Study',
+          icon: Icon(Icons.account_circle_outlined),
+          activeIcon: Icon(Icons.account_circle),
+          label: 'Profile',
         ),
       ],
     );

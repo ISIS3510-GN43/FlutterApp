@@ -17,6 +17,23 @@ class AuthViewModel extends ChangeNotifier {
   String get errorMessage => _errorMessage;
   Usuario? get usuarioActual => _usuarioActual;
 
+  Future<bool> register(Usuario usuario) async {
+    _isLoading = true;
+    _errorMessage = '';
+    notifyListeners();
+
+    try {
+      _usuarioActual = await _authRepository.register(usuario);
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> login(String email, String password) async {
     _isLoading = true;
     _errorMessage = '';
