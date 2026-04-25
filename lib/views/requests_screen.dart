@@ -37,7 +37,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
         const Color night = Color(0xFF0A090C);
         const Color white = Color(0xFFF0EDEE);
         const Color currant = Color(0xFF2C666E);
-        const Color blue = Color(0xFF90DDF0);
 
         return AnimatedBuilder(
           animation: _viewModel,

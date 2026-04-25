@@ -13,7 +13,7 @@ class FriendScheduleViewModel extends ScheduleViewModel {
   static int _totalCalls = 0;
   static double _totalMs = 0;
 
-  static const double _targetMs = 1.0; // 1ms target
+  static const double _targetMs = 1.0;
   static const String _webhookUrl = 'https://automation.luminotest.com/webhook/time-bq';
 
   bool _isUsingCachedData = false;

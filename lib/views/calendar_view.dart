@@ -68,7 +68,30 @@ class _CalendarViewState extends State<CalendarView> {
               ),
             ),
           ),
-          body: _buildBody(),
+          body: widget.viewModel.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : widget.viewModel.errorMessage.isNotEmpty
+                  ? Center(child: Text(widget.viewModel.errorMessage))
+                  : Column(
+                      children: [
+                        if (widget.viewModel.isOffline)
+                          Container(
+                            width: double.infinity,
+                            color: const Color(0xFF2C666E),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: const Text(
+                              'Sin conexión — mostrando datos guardados',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFFF0EDEE),
+                                fontSize: 12,
+                                fontFamily: 'Montserrat',
+                              ),
+                            ),
+                          ),
+                        Expanded(child: _buildCalendar()),
+                      ],
+                    ),
           floatingActionButton: widget.floatingActionButton,
           bottomNavigationBar: widget.showBottomNav
             ? AppBottomNav(

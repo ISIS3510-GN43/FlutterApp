@@ -55,7 +55,6 @@ class FriendDetailScreen extends StatelessWidget {
           throw Exception('Location permission denied.');
         }
 
-        // Ubicación
         final position = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
             accuracy: LocationAccuracy.high,
@@ -63,7 +62,6 @@ class FriendDetailScreen extends StatelessWidget {
         );
         final mapsLink = 'https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}';
 
-        // POST al webhook de n8n
         final response = await http.post(
           Uri.parse('https://automation.luminotest.com/webhook/email-location'),
           headers: {'Content-Type': 'application/json'},

@@ -5,6 +5,7 @@ abstract class ScheduleViewModel extends ChangeNotifier {
   bool get isLoading;
   String get errorMessage;
   List<Materia> get materias;
+  bool get isOffline => false;
 
   bool get isUsingCachedData => false;
   String get insightMessage => '';
