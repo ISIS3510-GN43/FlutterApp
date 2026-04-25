@@ -32,7 +32,7 @@ class RequestsRepository {
     );
 
     if (response.statusCode < 200) {
-      throw Exception('No se pudo aceptar la solicitud.');
+      throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be accepted.');
     }
   }
 
@@ -48,7 +48,7 @@ class RequestsRepository {
     );
 
     if (response.statusCode < 200) {
-      throw Exception('No se pudo rechazar la solicitud.');
+      throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be rejected.');
     }
   }
   Future<String?> findUserIdByUsername(String username) async {
@@ -68,7 +68,7 @@ class RequestsRepository {
     } else if (response.statusCode == 404) {
       return null;
     } else {
-      throw Exception('No se pudo buscar el usuario.');
+      throw Exception(jsonDecode(response.body)['message'] ?? 'The user could not be found.');
     }
   }
 
@@ -87,7 +87,7 @@ class RequestsRepository {
     if (response.statusCode == 200) {
       return Usuario.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('No se pudo obtener el usuario.');
+      throw Exception(jsonDecode(response.body)['message'] ?? 'The user could not be found.');
     }
   }
 
@@ -102,9 +102,24 @@ class RequestsRepository {
       headers: {'Content-Type': 'application/json'},
     );
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception(jsonDecode(response.body)['message'] ?? 'No se pudo enviar la solicitud.');
+    if (response.statusCode != 200) {
+      throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be sent.');
     }
+  }
+
+  Future<void> trackEvent(String event, String userId) async {
+    final body = {
+      "Evento": event,
+      "FechaActividad": DateTime.now().toIso8601String(),
+      "IdUsuario": userId,
+      "Plataforma": "Flutter",
+    };
+
+    http.post(
+      Uri.parse('${Config.baseUrl}/MetricaFriends/nuevo'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
   }
   
 }

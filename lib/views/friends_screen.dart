@@ -47,6 +47,17 @@ class _FriendsScreenState extends State<FriendsScreen> {
     }
   }
 
+  String _formatLastSync(DateTime? dt) {
+    if (dt == null) return 'Never synced';
+ 
+    final diff = DateTime.now().difference(dt);
+ 
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+
   @override
   Widget build(BuildContext context) {
     const night = Color(0xFF0A090C);
@@ -93,11 +104,22 @@ class _FriendsScreenState extends State<FriendsScreen> {
               ),
             ],
           ),
-          body: _buildBody(
-            night: night,
-            green: green,
-            currant: currant,
-            blue: blue,
+          body: Column(
+            children: [
+              // ── Banner offline: solo visible cuando no hay conexión ──────
+              if (_viewModel.isOffline)
+                _OfflineBanner(
+                  lastSynced: _formatLastSync(_viewModel.lastSyncedAt),
+                ),
+              Expanded(
+                child: _buildBody(
+                  night: night,
+                  green: green,
+                  currant: currant,
+                  blue: blue,
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -205,6 +227,37 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class _OfflineBanner extends StatelessWidget {
+  final String lastSynced;
+ 
+  const _OfflineBanner({required this.lastSynced});
+ 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.orange.shade100,
+      child: Row(
+        children: [
+          Icon(Icons.wifi_off_rounded, size: 16, color: Colors.orange.shade800),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'You\'re offline · Last updated: $lastSynced',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.orange.shade800,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
