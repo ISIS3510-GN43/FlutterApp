@@ -4,13 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'views/login_screen.dart';
 import 'views/login_screen.dart' show MainShell;
 import 'firebase_options.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await Hive.initFlutter();
   final prefs = await SharedPreferences.getInstance();
   final savedUserId = prefs.getString('userId');
 

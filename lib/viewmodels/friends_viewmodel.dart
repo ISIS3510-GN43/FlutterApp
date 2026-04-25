@@ -14,22 +14,34 @@ class FriendsViewModel extends ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = '';
   List<Usuario> _friends = [];
+  bool _isOffline = false;
+  DateTime? _lastSyncedAt;
 
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
   List<Usuario> get friends => _friends;
   bool get hasFriends => _friends.isNotEmpty;
+  bool get isOffline => _isOffline;
+  DateTime? get lastSyncedAt => _lastSyncedAt;
 
   Future<void> loadFriends(String userId) async {
     _isLoading = true;
     _errorMessage = '';
+    _isOffline = false;
     notifyListeners();
 
     try {
       _friends = await _friendsRepository.getFriends(userId);
+      _isOffline = false;
     } catch (e) {
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      final message = e.toString().replaceFirst('Exception: ', '');
+      if (message.contains('no cached')) {
+        _errorMessage = 'There are no friends to display';
+      } else {
+        _isOffline = true;
+      }
     } finally {
+      _lastSyncedAt = await _friendsRepository.getLastSyncedAt();
       _isLoading = false;
       notifyListeners();
     }
