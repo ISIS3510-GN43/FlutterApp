@@ -50,6 +50,7 @@ class RequestsViewModel extends ChangeNotifier {
         currentUserId: currentUserId,
         senderUserId: senderUserId,
       );
+      _repository.trackEvent("Accept request", currentUserId);
       await loadRequests(currentUserId);
       return true;
     } catch (e) {
@@ -68,6 +69,7 @@ class RequestsViewModel extends ChangeNotifier {
         currentUserId: currentUserId,
         senderUserId: senderUserId,
       );
+      _repository.trackEvent("Reject request", currentUserId);
       await loadRequests(currentUserId);
       return true;
     } catch (e) {
@@ -124,6 +126,7 @@ class RequestsViewModel extends ChangeNotifier {
         targetUserId: targetUserId,
         senderUserId: senderUserId,
       );
+      _repository.trackEvent("Create request", senderUserId);
       return true;
     } catch (e) {
       _searchMessage = e.toString().replaceFirst('Exception: ', '');
