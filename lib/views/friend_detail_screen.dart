@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../models/repositories/friend_schedule_repository.dart';
 import 'package:flutter/material.dart';
 import '../models/repositories/schedule_repository.dart';
 import '../viewmodels/friend_schedule_viewmodel.dart';
@@ -54,7 +55,6 @@ class FriendDetailScreen extends StatelessWidget {
           throw Exception('Location permission denied.');
         }
 
-        // Ubicación
         final position = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
             accuracy: LocationAccuracy.high,
@@ -62,7 +62,6 @@ class FriendDetailScreen extends StatelessWidget {
         );
         final mapsLink = 'https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}';
 
-        // POST al webhook de n8n
         final response = await http.post(
           Uri.parse('https://automation.luminotest.com/webhook/email-location'),
           headers: {'Content-Type': 'application/json'},
@@ -176,33 +175,59 @@ class FriendDetailScreen extends StatelessWidget {
                               builder: (ctx) => FloatingActionButton(
                                 backgroundColor: const Color(0xFF2C666E),
                                 onPressed: () async {
-                                  final friendHorarioId = friendVm.horarioId;
-                                  if (friendHorarioId.isEmpty) {
-                                    ScaffoldMessenger.of(ctx).showSnackBar(
-                                      const SnackBar(content: Text('El horario aún no está cargado.')),
-                                    );
-                                    return;
-                                  }
                                   try {
-                                    final myHorario = await ScheduleRepository().getActiveSchedule(userId);
+                                    final myScheduleFuture =
+                                        ScheduleRepository().getActiveScheduleWithCache(userId);
+
+                                    final friendScheduleFuture =
+                                        FriendScheduleRepository().getFriendActiveScheduleWithCache(friend.id);
+
+                                    await Future.wait([
+                                      myScheduleFuture,
+                                      friendScheduleFuture,
+                                    ]);
+
+                                    final myScheduleResult = await myScheduleFuture;
+                                    final friendScheduleResult = await friendScheduleFuture;
+
+                                    final myHorario = myScheduleResult.horario;
+                                    final friendHorario = friendScheduleResult.horario;
+
                                     if (!ctx.mounted) return;
-                                    Navigator.of(ctx).push(MaterialPageRoute(
-                                      builder: (_) => CalendarView(
-                                        userId: userId,
-                                        title: 'Match Schedule',
-                                        viewModel: MatchScheduleViewModel(
-                                          userId: userId,
-                                          friendId: friend.id,
-                                          horario1Id: myHorario.id,
-                                          horario2Id: friendHorarioId,
+
+                                    if (myHorario.id.isEmpty || friendHorario.id.isEmpty) {
+                                      ScaffoldMessenger.of(ctx).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('No se pudo preparar el match de horarios.'),
                                         ),
-                                        showBottomNav: false,
+                                      );
+                                      return;
+                                    }
+
+                                    Navigator.of(ctx).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => CalendarView(
+                                          userId: userId,
+                                          title: 'Match Schedule',
+                                          viewModel: MatchScheduleViewModel(
+                                            userId: userId,
+                                            friendId: friend.id,
+                                            horario1Id: myHorario.id,
+                                            horario2Id: friendHorario.id,
+                                          ),
+                                          showBottomNav: false,
+                                        ),
                                       ),
-                                    ));
+                                    );
                                   } catch (e) {
                                     if (!ctx.mounted) return;
+
                                     ScaffoldMessenger.of(ctx).showSnackBar(
-                                      SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+                                      SnackBar(
+                                        content: Text(
+                                          e.toString().replaceFirst('Exception: ', ''),
+                                        ),
+                                      ),
                                     );
                                   }
                                 },

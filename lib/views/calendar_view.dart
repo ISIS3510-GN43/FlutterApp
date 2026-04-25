@@ -72,7 +72,26 @@ class _CalendarViewState extends State<CalendarView> {
               ? const Center(child: CircularProgressIndicator())
               : widget.viewModel.errorMessage.isNotEmpty
                   ? Center(child: Text(widget.viewModel.errorMessage))
-                  : _buildCalendar(),
+                  : Column(
+                      children: [
+                        if (widget.viewModel.isOffline)
+                          Container(
+                            width: double.infinity,
+                            color: const Color(0xFF2C666E),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: const Text(
+                              'Sin conexión — mostrando datos guardados',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFFF0EDEE),
+                                fontSize: 12,
+                                fontFamily: 'Montserrat',
+                              ),
+                            ),
+                          ),
+                        Expanded(child: _buildCalendar()),
+                      ],
+                    ),
           floatingActionButton: widget.floatingActionButton,
           bottomNavigationBar: widget.showBottomNav
             ? AppBottomNav(
@@ -88,6 +107,8 @@ class _CalendarViewState extends State<CalendarView> {
   Widget _buildCalendar() {
     return Column(
       children: [
+        if (widget.viewModel.isUsingCachedData) _buildCachedDataBanner(),
+        if (widget.viewModel.insightMessage.isNotEmpty) _buildInsightCard(),
         _buildDayHeaders(),
         Expanded(
           child: SingleChildScrollView(
@@ -97,7 +118,119 @@ class _CalendarViewState extends State<CalendarView> {
       ],
     );
   }
+  Widget _buildBody() {
+    if (widget.viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
+    if (widget.viewModel.errorMessage.isNotEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.wifi_off_rounded,
+                size: 44,
+                color: Color(0xFF2C666E),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                widget.viewModel.errorMessage,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Color(0xFF0A090C),
+                ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: () => widget.viewModel.loadSchedule(),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+  return _buildCalendar();
+}
+
+Widget _buildCachedDataBanner() {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: const Color(0xFF90DDF0).withValues(alpha: 0.25),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: const Color(0xFF2C666E).withValues(alpha: 0.35),
+      ),
+    ),
+    child: const Row(
+      children: [
+        Icon(
+          Icons.cloud_off_rounded,
+          color: Color(0xFF2C666E),
+          size: 18,
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            'Showing saved data. Remote refresh was not available.',
+            style: TextStyle(
+              color: Color(0xFF07393C),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildInsightCard() {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 8,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(
+          Icons.lightbulb_outline_rounded,
+          color: Color(0xFF2C666E),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            widget.viewModel.insightMessage,
+            style: const TextStyle(
+              color: Color(0xFF0A090C),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
   Widget _buildDayHeaders() {
     const night = Color(0xFF0A090C);
     return Row(

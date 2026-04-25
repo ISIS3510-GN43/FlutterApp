@@ -8,6 +8,7 @@ import '../viewmodels/auth_viewmodel.dart';
 import '../viewmodels/home_schedule_viewmodel.dart';
 import 'friends_screen.dart';
 import 'app_nav.dart';
+import 'nrc_screen.dart';
 import 'profile_view.dart';
 import 'register_screen.dart';
 
@@ -204,6 +205,26 @@ class _MainShellState extends State<MainShell> {
               : const Center(child: CircularProgressIndicator()),
         ],
       ),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xFF07393C),
+              foregroundColor: Colors.white,
+              onPressed: () {
+                final horarioId = _scheduleViewModel.horarioId;
+                if (horarioId == null) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => NrcScreen(
+                      userId: widget.userId,
+                      horarioId: horarioId,
+                    ),
+                  ),
+                ).then((_) => _scheduleViewModel.loadSchedule());
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
         onTap: (index) {
