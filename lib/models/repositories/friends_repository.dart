@@ -23,6 +23,11 @@ void _parseFriendsIsolate(List<Object> args) {
 const _hiveFriendsBox = 'amigos';
 const _prefsLastSync = 'friends_last_synced_at';
 
+class OfflineWithDataException implements Exception {
+  final List<Usuario> cachedFriends;
+  OfflineWithDataException(this.cachedFriends);
+}
+
 class FriendsRepository {
 
   Future<List<dynamic>> _parseInIsolate(String rawJson) async {
@@ -39,7 +44,15 @@ class FriendsRepository {
 
   Future<void> _saveToCache(String userId, String rawJson) async {
     final box = await Hive.openBox<String>(_hiveFriendsBox);
-    await box.put(userId, rawJson);
+
+    final List<dynamic> full = jsonDecode(rawJson);
+    final minimal = full.map((u) => {
+      'id': u['id'] ?? '',
+      'username': u['username'] ?? '',
+      'foto': u['foto'] ?? '',
+    }).toList();
+
+    await box.put(userId, jsonEncode(minimal));
  
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
@@ -82,10 +95,16 @@ class FriendsRepository {
       } else {
         throw Exception('There are no friends to display');
       }
-    } catch (_) {
-
+    } catch (e) {
+      final isServerError = e is Exception &&
+          e.toString().contains('There are no friends');
+      
+      if (isServerError) rethrow; 
+      
       final cached = await _loadFromCache(userId);
-      if (cached != null) return cached;
+      if (cached != null) {
+        throw OfflineWithDataException(cached);
+      }
       throw Exception('No connection and no cached data available');
     }
   }

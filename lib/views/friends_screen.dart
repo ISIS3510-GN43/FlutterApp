@@ -1,3 +1,5 @@
+import 'package:app_flutter/cache/profile_image_cache_manager.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/usuario.dart';
@@ -229,6 +231,7 @@ class FriendsScreenState extends State<FriendsScreen> {
           child: _FriendCard(
             friend: friend,
             isAvailable: isAvailable,
+            isOffline: _viewModel.isOffline,
           ),
         );
       },
@@ -270,10 +273,12 @@ class _OfflineBanner extends StatelessWidget {
 class _FriendCard extends StatelessWidget {
   final Usuario friend;
   final bool isAvailable;
+  final bool isOffline;
 
   const _FriendCard({
     required this.friend,
     required this.isAvailable,
+    required this.isOffline,
   });
 
   @override
@@ -301,11 +306,20 @@ class _FriendCard extends StatelessWidget {
           CircleAvatar(
             radius: 26,
             backgroundColor: currant.withValues(alpha: 0.15),
-            backgroundImage:
-                friend.foto.isNotEmpty ? NetworkImage(friend.foto) : null,
-            child: friend.foto.isEmpty
-                ? const Icon(Icons.person, color: currant)
-                : null,
+            child: friend.foto.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: friend.foto,
+                      cacheManager: ProfileImageCacheManager(),
+                      width: 52,
+                      height: 52,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const CircularProgressIndicator(strokeWidth: 2),
+                      errorWidget: (context, url, error) => const Icon(Icons.person, color: currant),
+                    ),
+                )
+                : const Icon(Icons.person, color: currant),
+                
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -321,9 +335,11 @@ class _FriendCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: isAvailable
-                  ? Colors.green.withValues(alpha: 0.10)
-                  : Colors.red.withValues(alpha: 0.10),
+              color: isOffline
+                  ? Colors.grey.withValues(alpha: 0.10)
+                  : isAvailable
+                    ? Colors.green.withValues(alpha: 0.10)
+                    : Colors.red.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
@@ -332,15 +348,15 @@ class _FriendCard extends StatelessWidget {
                 Icon(
                   Icons.circle,
                   size: 10,
-                  color: isAvailable ? Colors.green : Colors.red,
+                  color: isOffline ? Colors.grey : isAvailable ? Colors.green : Colors.red,
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  isAvailable ? 'Available' : 'Busy',
+                  isOffline ? 'Offline' : isAvailable ? 'Available' : 'Busy',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isAvailable ? Colors.green : Colors.red,
+                    color: isOffline ? Colors.grey : isAvailable ? Colors.green : Colors.red,
                   ),
                 ),
               ],

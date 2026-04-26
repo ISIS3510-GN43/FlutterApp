@@ -34,11 +34,16 @@ class FriendsViewModel extends ChangeNotifier {
       _friends = await _friendsRepository.getFriends(userId);
       _isOffline = false;
     } catch (e) {
-      final message = e.toString().replaceFirst('Exception: ', '');
-      if (message.contains('no cached')) {
-        _errorMessage = 'There are no friends to display';
+      if (e is OfflineWithDataException) {
+        _friends = e.cachedFriends; 
+        _isOffline = true;     
       } else {
-        _isOffline = true;
+        final message = e.toString().replaceFirst('Exception: ', '');
+        if (message.contains('no cached')) {
+          _errorMessage = 'No internet connection and no saved data.';
+        } else {
+          _errorMessage = message;
+        }
       }
     } finally {
       _lastSyncedAt = await _friendsRepository.getLastSyncedAt();
