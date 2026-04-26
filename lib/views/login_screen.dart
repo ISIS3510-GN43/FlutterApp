@@ -168,6 +168,7 @@ class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
   late final HomeScheduleViewModel _scheduleViewModel;
   Usuario? _usuario;
+  final GlobalKey<FriendsScreenState> friendsKey = GlobalKey();
 
   @override
   void initState() {
@@ -198,7 +199,10 @@ class _MainShellState extends State<MainShell> {
             viewModel: _scheduleViewModel,
             showBottomNav: false,
           ),
-          FriendsScreen(userId: widget.userId),
+          FriendsScreen(
+            key: friendsKey,
+            userId: widget.userId,
+          ),
           const Center(child: Text('Grades')),
           _usuario != null
               ? ProfileView(usuario: _usuario!)
@@ -228,7 +232,16 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() => _currentIndex = index);
+          if (_currentIndex == index && index == 1) {
+            friendsKey.currentState?.refresh();
+            return;
+          }
+          setState(() {
+            _currentIndex = index;
+          });
+          if (index == 1) {
+            friendsKey.currentState?.refresh();
+          }
         },
       ),
     );

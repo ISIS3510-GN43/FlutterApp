@@ -16,10 +16,10 @@ class FriendsScreen extends StatefulWidget {
   });
 
   @override
-  State<FriendsScreen> createState() => _FriendsScreenState();
+  State<FriendsScreen> createState() => FriendsScreenState();
 }
 
-class _FriendsScreenState extends State<FriendsScreen> {
+class FriendsScreenState extends State<FriendsScreen> {
   final FriendsViewModel _viewModel = FriendsViewModel();
 
   @override
@@ -32,6 +32,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
   void dispose() {
     _viewModel.dispose();
     super.dispose();
+  }
+
+  Future<void> refresh() async {
+    await _viewModel.loadFriends(widget.userId);
+    setState(() {});
   }
 
   Future<void> _openRequestsScreen() async {
