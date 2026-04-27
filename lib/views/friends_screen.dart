@@ -1,4 +1,5 @@
 import 'package:app_flutter/cache/profile_image_cache_manager.dart';
+import 'package:app_flutter/views/search_availability_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -91,8 +92,35 @@ class FriendsScreenState extends State<FriendsScreen> {
               ),
             ),
             actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchAvailabilityScreen(
+                        userId: widget.userId,
+                        isOffline: _viewModel.isOffline,
+                      ),
+                    ),
+                  );
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: blue,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.search_rounded,
+                    color: night,
+                    size: 22,
+                  ),
+                ),
+              ),
+              
               Padding(
                 padding: const EdgeInsets.only(right: 12),
+                
                 child: IconButton(
                   onPressed: _openRequestsScreen,
                   icon: Container(
