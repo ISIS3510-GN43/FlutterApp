@@ -17,7 +17,7 @@ class AuthRepository {
 
       final uid = credential.user?.uid;
       if (uid == null) {
-        throw Exception('No se pudo obtener el UID del usuario.');
+        throw Exception('The user UID could not be obtained');
       }
 
       final response = await http.get(
@@ -29,12 +29,12 @@ class AuthRepository {
         final data = jsonDecode(response.body);
         return Usuario.fromJson(data);
       } else {
-        throw Exception('No se pudo obtener el usuario desde el backend.');
+        throw Exception('The user could not be obtained from the backend');
       }
     } on fb_auth.FirebaseAuthException catch (e) {
       throw Exception(_mapFirebaseError(e));
     } catch (e) {
-      throw Exception('Error en login: $e');
+      throw Exception('Login error: $e');
     }
   }
 
@@ -49,7 +49,7 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       return Usuario.fromJson(data);
     } else {
-      throw Exception('No se pudo registrar el usuario.');
+      throw Exception('The user could not be registered');
     }
   }
 
@@ -63,7 +63,7 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       return Usuario.fromJson(data);
     } else {
-      throw Exception('No se pudo obtener el usuario.');
+      throw Exception('The user could not be obtained');
     }
   }
 
@@ -74,15 +74,15 @@ class AuthRepository {
   String _mapFirebaseError(fb_auth.FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
-        return 'No existe un usuario con ese correo.';
+        return 'There is no user with that email address';
       case 'wrong-password':
-        return 'Contraseña incorrecta.';
+        return 'Incorrect password';
       case 'invalid-email':
-        return 'Correo inválido.';
+        return 'Invalid email address';
       case 'invalid-credential':
-        return 'Credenciales inválidas.';
+        return 'Invalid credentials';
       default:
-        return 'Error de autenticación.';
+        return 'Authentication error';
     }
   }
 }

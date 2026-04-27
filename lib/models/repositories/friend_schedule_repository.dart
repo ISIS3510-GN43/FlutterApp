@@ -50,7 +50,7 @@ class FriendScheduleRepository {
       }
 
       throw Exception(
-        'No se pudo obtener el horario del amigo y no hay datos guardados.',
+        'No se pudo obtener el horario del amigo y no hay datos guardados',
       );
     }
   }
