@@ -10,7 +10,7 @@ class RequestsRepository {
     final response = await http.get(
       Uri.parse('${Config.baseUrl}/usuarios/$userId/solicitudes'),
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -29,7 +29,7 @@ class RequestsRepository {
         '${Config.baseUrl}/usuarios/$currentUserId/solicitudes/$senderUserId/aceptar',
       ),
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode < 200) {
       throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be accepted.');
@@ -45,7 +45,7 @@ class RequestsRepository {
         '${Config.baseUrl}/usuarios/$currentUserId/rechazarsolicitud/$senderUserId',
       ),
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode < 200) {
       throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be rejected.');
@@ -55,7 +55,7 @@ class RequestsRepository {
     final response = await http.get(
       Uri.parse('${Config.baseUrl}/usuarios/codigo/username/$username'),
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final body = response.body.trim();
@@ -82,7 +82,7 @@ class RequestsRepository {
     final response = await http.get(
       Uri.parse('${Config.baseUrl}/usuarios/$userId'),
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       return Usuario.fromJson(jsonDecode(response.body));
@@ -100,7 +100,7 @@ class RequestsRepository {
         '${Config.baseUrl}/usuarios/$targetUserId/solicitudes/$senderUserId',
       ),
       headers: {'Content-Type': 'application/json'},
-    );
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode != 200) {
       throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be sent.');

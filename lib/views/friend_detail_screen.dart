@@ -1,17 +1,17 @@
-import 'dart:convert';
 import '../models/repositories/friend_schedule_repository.dart';
 import 'package:flutter/material.dart';
 import '../models/repositories/schedule_repository.dart';
 import '../viewmodels/friend_schedule_viewmodel.dart';
 import '../viewmodels/match_schedule_viewmodel.dart';
 import 'calendar_view.dart';
-import '../config/constants.dart';
 import '../models/usuario.dart';
 import 'app_nav.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
+import '../cache/profile_image_cache_manager.dart';
+import '../viewmodels/friend_detail_viewmodel.dart';
 
-class FriendDetailScreen extends StatelessWidget {
+
+class FriendDetailScreen extends StatefulWidget {
   final Usuario friend;
   final bool isAvailable;
   final String userId;
@@ -26,71 +26,31 @@ class FriendDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<FriendDetailScreen> createState() => _FriendDetailScreenState();
+}
+
+class _FriendDetailScreenState extends State<FriendDetailScreen> {
+  late final FriendDetailViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = FriendDetailViewModel();
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+  
+
+  @override
   Widget build(BuildContext context) {
     const Color night = Color(0xFF0A090C);
     const Color white = Color(0xFFF0EDEE);
     const Color currant = Color(0xFF2C666E);
     const Color blue = Color(0xFF90DDF0);
-
-    Future<void> sendMyLocation() async {
-      try {
-        final userResponse = await http.get(
-          Uri.parse('${Config.baseUrl}/usuarios/$userId'),
-          headers: {'Content-Type': 'application/json'},
-        );
-        if (userResponse.statusCode != 200) {
-          throw Exception('Could not fetch user data.');
-        }
-        final currentUsername = jsonDecode(userResponse.body)['username'] as String;
-        // Permisos
-        if (!await Geolocator.isLocationServiceEnabled()) {
-          throw Exception('Location services are disabled.');
-        }
-        var permission = await Geolocator.checkPermission();
-        if (permission == LocationPermission.denied) {
-          permission = await Geolocator.requestPermission();
-        }
-        if (permission == LocationPermission.denied ||
-            permission == LocationPermission.deniedForever) {
-          throw Exception('Location permission denied.');
-        }
-
-        final position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
-        );
-        final mapsLink = 'https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}';
-
-        final response = await http.post(
-          Uri.parse('https://automation.luminotest.com/webhook/email-location'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'to': friend.gmail,
-            'name': friend.username,
-            'from': currentUsername,
-            'mapsLink': mapsLink,
-          }),
-        );
-
-        if (!context.mounted) return;
-
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Email sent successfully!')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to send email. Try again.')),
-          );
-        }
-      } catch (e) {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
-        );
-      }
-    }
 
     return Scaffold(
       backgroundColor: white,
@@ -100,28 +60,32 @@ class FriendDetailScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: night),
       ),
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical:32),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: 70,
                   backgroundColor: blue.withValues(alpha: 0.25),
-                  backgroundImage:
-                      friend.foto.isNotEmpty ? NetworkImage(friend.foto) : null,
-                  child: friend.foto.isEmpty
-                      ? const Icon(
-                          Icons.person,
-                          size: 64,
-                          color: currant,
-                        )
-                      : null,
+                  child: widget.friend.foto.isNotEmpty
+                      ? ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: widget.friend.foto,
+                            cacheManager: ProfileImageCacheManager(),
+                            width: 140,
+                            height: 140,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const CircularProgressIndicator(strokeWidth: 2),
+                            errorWidget: (context, url, error) => const Icon(Icons.person, size: 64, color: currant),
+                          ),
+                        ) 
+                      : const Icon(Icons.person, size: 64, color: currant),            
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  friend.username,
+                  widget.friend.username,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 28,
@@ -129,47 +93,106 @@ class FriendDetailScreen extends StatelessWidget {
                     color: night,
                   ),
                 ),
-                const SizedBox(height: 28),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: sendMyLocation,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: currant,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Send my location',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                AnimatedBuilder(
+                  animation: _viewModel,
+                  builder: (context, _) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _viewModel.isLoading
+                                ? null
+                                : () => _viewModel.sendLocation(
+                                      userId: widget.userId,
+                                      friendGmail: widget.friend.gmail,
+                                      friendUsername: widget.friend.username,
+                                    ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: currant,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: _viewModel.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Send my location',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                          ),
+                        ),
+                        if (_viewModel.sendState == SendLocationState.noConnection)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.wifi_off_rounded, size: 14, color: Colors.orange.shade700),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'No internet connection',
+                                  style: TextStyle(fontSize: 12, color: Colors.orange.shade700),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (_viewModel.sendState == SendLocationState.success)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.check_circle_outline, size: 14, color: Colors.green),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Location sent!',
+                                  style: TextStyle(fontSize: 12, color: Colors.green),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (_viewModel.sendState == SendLocationState.error)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              _viewModel.errorMessage,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12, color: Colors.red),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ), 
                 const SizedBox(height: 14),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
                     onPressed: () {
-                      final friendVm = FriendScheduleViewModel(friendId: friend.id);
+                      final friendVm = FriendScheduleViewModel(friendId: widget.friend.id);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => CalendarView(
-                            userId: userId,
-                            title: '${friend.username}\'s Schedule',
+                            userId: widget.userId,
+                            title: '${widget.friend.username}\'s Schedule',
                             viewModel: friendVm,
                             showBottomNav: true,
                             navCurrentIndex: 1,
                             onNavTap: (index) {
                               Navigator.popUntil(context, (route) => route.isFirst);
-                              onTabSwitch?.call(index);
+                              widget.onTabSwitch?.call(index);
                             },
                             floatingActionButton: Builder(
                               builder: (ctx) => FloatingActionButton(
@@ -177,10 +200,10 @@ class FriendDetailScreen extends StatelessWidget {
                                 onPressed: () async {
                                   try {
                                     final myScheduleFuture =
-                                        ScheduleRepository().getActiveScheduleWithCache(userId);
+                                        ScheduleRepository().getActiveScheduleWithCache(widget.userId);
 
                                     final friendScheduleFuture =
-                                        FriendScheduleRepository().getFriendActiveScheduleWithCache(friend.id);
+                                        FriendScheduleRepository().getFriendActiveScheduleWithCache(widget.friend.id);
 
                                     await Future.wait([
                                       myScheduleFuture,
@@ -207,11 +230,11 @@ class FriendDetailScreen extends StatelessWidget {
                                     Navigator.of(ctx).push(
                                       MaterialPageRoute(
                                         builder: (_) => CalendarView(
-                                          userId: userId,
+                                          userId: widget.userId,
                                           title: 'Match Schedule',
                                           viewModel: MatchScheduleViewModel(
-                                            userId: userId,
-                                            friendId: friend.id,
+                                            userId: widget.userId,
+                                            friendId: widget.friend.id,
                                             horario1Id: myHorario.id,
                                             horario2Id: friendHorario.id,
                                           ),
@@ -264,7 +287,7 @@ class FriendDetailScreen extends StatelessWidget {
         currentIndex: 1,
         onTap: (index) {
           Navigator.popUntil(context, (route) => route.isFirst);
-          onTabSwitch?.call(index);
+          widget.onTabSwitch?.call(index);
         },
       ),
     );

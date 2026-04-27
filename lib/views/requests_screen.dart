@@ -26,6 +26,12 @@ class _RequestsScreenState extends State<RequestsScreen> {
   }
 
   Future<void> _onSearchPressed() async {
+    if (_viewModel.isOffline) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('No internet connection')),
+    );
+    return;
+  }
     final TextEditingController controller = TextEditingController();
 
     _viewModel.clearSearchState();
@@ -253,7 +259,31 @@ class _RequestsScreenState extends State<RequestsScreen> {
               ),
             ],
           ),
-          body: _buildBody(),
+          body: Column(
+            children: [
+              if (_viewModel.isOffline && _viewModel.hasRequests)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  color: Colors.orange.shade100,
+                  child: Row(
+                    children: [
+                      Icon(Icons.wifi_off_rounded, size: 16, color: Colors.orange.shade800),
+                      const SizedBox(width: 8),
+                      Text(
+                        'No internet connection',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.orange.shade800,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Expanded(child: _buildBody()),
+            ],
+          ),
         );
       },
     );

@@ -16,6 +16,7 @@ class RequestsViewModel extends ChangeNotifier {
   bool _isSearching = false;
   bool _isSendingRequest = false;
   String _searchMessage = '';
+  bool _isOffline = false;
 
   Usuario? get searchedUser => _searchedUser;
   bool get isSearching => _isSearching;
@@ -25,16 +26,26 @@ class RequestsViewModel extends ChangeNotifier {
   String get errorMessage => _errorMessage;
   List<Usuario> get requests => _requests;
   bool get hasRequests => _requests.isNotEmpty;
+  bool get isOffline => _isOffline;
 
   Future<void> loadRequests(String userId) async {
     _isLoading = true;
     _errorMessage = '';
+    _isOffline = false;
     notifyListeners();
 
     try {
       _requests = await _repository.getRequests(userId);
     } catch (e) {
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        final msg = e.toString().toLowerCase();
+        if (msg.contains('socketexception') || msg.contains('timeout') || msg.contains('connection')) {
+          _isOffline = true;
+          if (_requests.isEmpty) {
+            _errorMessage = 'No internet connection';
+          }
+        } else {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -54,9 +65,14 @@ class RequestsViewModel extends ChangeNotifier {
       await loadRequests(currentUserId);
       return true;
     } catch (e) {
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
-      notifyListeners();
-      return false;
+        final msg = e.toString().toLowerCase();
+        if (msg.contains('socketexception') || msg.contains('timeout') || msg.contains('connection')) {
+          _isOffline = true;
+        } else {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        }
+        notifyListeners();
+        return false;
     }
   }
 
@@ -73,9 +89,14 @@ class RequestsViewModel extends ChangeNotifier {
       await loadRequests(currentUserId);
       return true;
     } catch (e) {
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
-      notifyListeners();
-      return false;
+        final msg = e.toString().toLowerCase();
+        if (msg.contains('socketexception') || msg.contains('timeout') || msg.contains('connection')) {
+          _isOffline = true;
+        } else {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        }
+        notifyListeners();
+        return false;
     }
   }
 
@@ -107,7 +128,12 @@ class RequestsViewModel extends ChangeNotifier {
 
       _searchedUser = user;
     } catch (e) {
-      _searchMessage = e.toString().replaceFirst('Exception: ', '');
+        final msg = e.toString().toLowerCase();
+        if (msg.contains('socketexception') || msg.contains('timeout') || msg.contains('connection')) {
+          _searchMessage = 'No internet connection';
+        } else {
+          _searchMessage = e.toString().replaceFirst('Exception: ', '');
+        }
     } finally {
       _isSearching = false;
       notifyListeners();
@@ -129,9 +155,14 @@ class RequestsViewModel extends ChangeNotifier {
       _repository.trackEvent("Create request", senderUserId);
       return true;
     } catch (e) {
-      _searchMessage = e.toString().replaceFirst('Exception: ', '');
-      notifyListeners();
-      return false;
+        final msg = e.toString().toLowerCase();
+        if (msg.contains('socketexception') || msg.contains('timeout') || msg.contains('connection')) {
+          _searchMessage = 'No internet connection';
+        } else {
+          _searchMessage = e.toString().replaceFirst('Exception: ', '');
+        }
+        notifyListeners();
+        return false;
     } finally {
       _isSendingRequest = false;
       notifyListeners();
