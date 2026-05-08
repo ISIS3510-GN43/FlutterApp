@@ -5,9 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../cache/profile_image_cache_manager.dart';
+import '../models/data/cache/profile_image_cache_manager.dart';
 import '../models/repositories/usuario_repository.dart';
-import '../models/usuario.dart';
+import '../models/entities/usuario.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import 'login_screen.dart';
 

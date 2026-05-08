@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/horario.dart';
+import '../../entities/horario.dart';
 
 class ScheduleLoadResult {
   final Horario horario;

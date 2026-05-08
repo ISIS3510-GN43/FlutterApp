@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/usuario.dart';
+import '../models/entities/usuario.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import 'login_screen.dart';
 

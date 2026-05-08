@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../config/constants.dart';
-import '../../services/schedule_cache_service.dart';
-import '../horario.dart';
+import '../data/cache/schedule_cache_service.dart';
+import '../entities/horario.dart';
 
 class ScheduleRepository {
   final ScheduleCacheService _cacheService;
@@ -48,7 +48,7 @@ class ScheduleRepository {
       }
 
       throw Exception(
-        'No se pudo obtener el horario activo y no hay datos guardados.',
+        'The active schedule could not be obtained and there is no saved data.',
       );
     }
   }

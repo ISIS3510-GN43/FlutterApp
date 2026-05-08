@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:http/http.dart' as http;
 
 import '../../config/constants.dart';
-import '../usuario.dart';
+import '../entities/usuario.dart';
 
 class AuthRepository {
   final fb_auth.FirebaseAuth _firebaseAuth = fb_auth.FirebaseAuth.instance;

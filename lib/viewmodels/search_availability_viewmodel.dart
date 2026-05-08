@@ -1,5 +1,6 @@
+import 'package:app_flutter/models/entities/amigo_disponibilidad.dart';
 import 'package:flutter/material.dart';
-import '../models/dia.dart';
+import '../models/entities/dia.dart';
 import '../models/repositories/search_availability_repository.dart';
  
 class SearchAvailabilityViewModel extends ChangeNotifier {

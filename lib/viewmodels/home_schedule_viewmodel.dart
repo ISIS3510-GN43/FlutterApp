@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/horario.dart';
-import '../models/materia.dart';
+import '../models/entities/horario.dart';
+import '../models/entities/materia.dart';
 import '../models/repositories/schedule_repository.dart';
 import 'schedule_viewmodel.dart';
 
@@ -67,7 +67,7 @@ class HomeScheduleViewModel extends ScheduleViewModel {
         _materias = cached.clases;
         _isOffline = true;
       } else {
-        _errorMessage = 'Sin conexión y sin datos guardados.';
+        _errorMessage = 'No connection and no saved data.';
       }
     } finally {
       _isLoading = false;

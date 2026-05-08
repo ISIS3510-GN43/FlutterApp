@@ -1,9 +1,9 @@
-import 'package:app_flutter/cache/profile_image_cache_manager.dart';
+import 'package:app_flutter/models/data/cache/profile_image_cache_manager.dart';
 import 'package:app_flutter/views/search_availability_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../models/usuario.dart';
+import '../models/entities/usuario.dart';
 import '../viewmodels/friends_viewmodel.dart';
 import 'friend_detail_screen.dart';
 import 'requests_screen.dart';

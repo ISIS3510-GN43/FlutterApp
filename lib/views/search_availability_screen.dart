@@ -1,6 +1,6 @@
+import 'package:app_flutter/models/entities/amigo_disponibilidad.dart';
 import 'package:flutter/material.dart';
-import '../models/dia.dart';
-import '../models/repositories/search_availability_repository.dart';
+import '../models/entities/dia.dart';
 import '../viewmodels/search_availability_viewmodel.dart';
  
 class SearchAvailabilityScreen extends StatefulWidget {
@@ -464,7 +464,6 @@ class _ResultsSection extends StatelessWidget {
   const _ResultsSection({required this.resultados});
  
   static const night = Color(0xFF0A090C);
-  static const currant = Color(0xFF2C666E);
  
   @override
   Widget build(BuildContext context) {
@@ -532,7 +531,6 @@ class _AmigoCard extends StatelessWidget {
   const _AmigoCard({required this.amigo});
  
   static const night = Color(0xFF0A090C);
-  static const currant = Color(0xFF2C666E);
  
   @override
   Widget build(BuildContext context) {

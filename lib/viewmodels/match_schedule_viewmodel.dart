@@ -1,5 +1,5 @@
-import '../models/dia.dart';
-import '../models/materia.dart';
+import '../models/entities/dia.dart';
+import '../models/entities/materia.dart';
 import '../models/repositories/match_repository.dart';
 import 'schedule_viewmodel.dart';
 
@@ -70,7 +70,7 @@ class MatchScheduleViewModel extends ScheduleViewModel {
 
   String _buildNextCommonSlotMessage(List<Materia> commonSlots) {
     if (commonSlots.isEmpty) {
-      return 'No se encontraron espacios libres comunes con este amigo.';
+      return 'No common free spaces were found with this friend.';
     }
 
     final now = DateTime.now();
@@ -127,20 +127,20 @@ class MatchScheduleViewModel extends ScheduleViewModel {
     }
 
     if (bestCandidate == null) {
-      return 'No se encontraron espacios libres comunes próximos.';
+      return 'No nearby common open spaces were found.';
     }
 
     final dayLabel =
-        bestCandidate.daysUntil == 0 ? 'Hoy' : _dayLabel(bestCandidate.day);
+        bestCandidate.daysUntil == 0 ? 'Today' : _dayLabel(bestCandidate.day);
 
     final startLabel = bestCandidate.effectiveStartMinutes == nowMinutes &&
             bestCandidate.startMinutes < nowMinutes
-        ? 'ahora'
+        ? 'now'
         : _formatMinutes(bestCandidate.startMinutes);
 
     final endLabel = _formatMinutes(bestCandidate.endMinutes);
 
-    return 'Siguiente espacio libre en común : $dayLabel, $startLabel - $endLabel';
+    return 'Next common free space : $dayLabel, $startLabel - $endLabel';
   }
 
   int _weekdayNumber(Dia day) {
@@ -177,19 +177,19 @@ class MatchScheduleViewModel extends ScheduleViewModel {
   String _dayLabel(Dia day) {
     switch (day) {
       case Dia.lunes:
-        return 'Lunes';
+        return 'Monday';
       case Dia.martes:
-        return 'Martes';
+        return 'Tuesday';
       case Dia.miercoles:
-        return 'Miércoles';
+        return 'Wednesday';
       case Dia.jueves:
-        return 'Jueves';
+        return 'Thrusday';
       case Dia.viernes:
-        return 'Viernes';
+        return 'Friday';
       case Dia.sabado:
-        return 'Sábado';
+        return 'Saturday';
       case Dia.domingo:
-        return 'Domingo';
+        return 'Sunday';
     }
   }
 }

@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../config/constants.dart';
-import '../../services/schedule_cache_service.dart';
-import '../horario.dart';
+import '../data/cache/schedule_cache_service.dart';
+import '../entities/horario.dart';
 
 class MatchScheduleRepository {
   final ScheduleCacheService _cacheService;
@@ -56,7 +56,7 @@ class MatchScheduleRepository {
       }
 
       throw Exception(
-        'No se pudo obtener el match de horarios y no hay datos guardados.',
+        'The schedule match could not be obtained and there is no saved data.',
       );
     }
   }

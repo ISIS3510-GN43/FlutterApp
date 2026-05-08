@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:app_flutter/models/dia.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../config/constants.dart';
-import '../models/materia.dart';
-import '../models/usuario.dart';
+import '../models/entities/materia.dart';
+import '../models/entities/usuario.dart';
 
 class NrcScreen extends StatefulWidget {
   final String userId;
