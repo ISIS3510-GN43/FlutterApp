@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/materia.dart';
+import '../models/entities/materia.dart';
 
 abstract class ScheduleViewModel extends ChangeNotifier {
   bool get isLoading;

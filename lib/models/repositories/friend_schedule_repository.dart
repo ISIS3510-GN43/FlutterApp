@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../config/constants.dart';
-import '../../services/schedule_cache_service.dart';
-import '../horario.dart';
+import '../data/cache/schedule_cache_service.dart';
+import '../entities/horario.dart';
 
 class FriendScheduleRepository {
   final ScheduleCacheService _cacheService;
@@ -50,7 +50,7 @@ class FriendScheduleRepository {
       }
 
       throw Exception(
-        'No se pudo obtener el horario del amigo y no hay datos guardados',
+        'The friends schedule could not be obtained and no data was saved.',
       );
     }
   }

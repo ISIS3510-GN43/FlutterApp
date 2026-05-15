@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/dia.dart';
+import '../models/entities/dia.dart';
 import '../viewmodels/schedule_viewmodel.dart';
 import 'app_nav.dart';
 

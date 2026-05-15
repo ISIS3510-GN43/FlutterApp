@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/dia.dart';
-import '../models/horario.dart';
-import '../models/usuario.dart';
+import '../models/entities/dia.dart';
+import '../models/entities/horario.dart';
+import '../models/entities/usuario.dart';
 import '../models/repositories/friends_repository.dart';
 
 class FriendsViewModel extends ChangeNotifier {

@@ -1,54 +1,26 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../config/constants.dart';
-
-class AmigoDisponibilidad {
-  final String amigoId;
-  final String username;
-  final String estado;
-
-  AmigoDisponibilidad({
-    required this.amigoId,
-    required this.username,
-    required this.estado,
-  });
-
-  factory AmigoDisponibilidad.fromJson(Map<String, dynamic> json) {
-    return AmigoDisponibilidad(
-      amigoId: json['amigoId'] ?? '',
-      username: json['username'] ?? '',
-      estado: json['estado'] ?? 'ocupado',
-    );
-  }
-
-  bool get isLibre => estado == 'libre';
-}
+import '../entities/amigo_disponibilidad.dart';
+import '../data/external/web_service.dart';
 
 class SearchAvailabilityRepository {
+  final WebService _webService;
+
+  SearchAvailabilityRepository({WebService? webService})
+      : _webService = webService ?? WebService();
+
   Future<List<AmigoDisponibilidad>> buscarAmigosLibres({
     required String userId,
     required String dia,
     required int horaInicio,
     required int horaFin,
   }) async {
-    final response = await http
-        .post(
-          Uri.parse('${Config.baseUrl}/Horarios/amigos-libres'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'userId': userId,
-            'dia': dia,
-            'horaInicio': horaInicio,
-            'horaFin': horaFin,
-          }),
-        )
-        .timeout(const Duration(seconds: 15));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => AmigoDisponibilidad.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to fetch availability');
-    }
+    final rawJson = await _webService.fetchAmigosLibres(
+      userId: userId,
+      dia: dia,
+      horaInicio: horaInicio,
+      horaFin: horaFin,
+    );
+    final List<dynamic> data = jsonDecode(rawJson);
+    return data.map((json) => AmigoDisponibilidad.fromJson(json)).toList();
   }
 }

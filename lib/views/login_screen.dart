@@ -2,7 +2,7 @@ import 'package:app_flutter/views/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/usuario.dart';
+import '../models/entities/usuario.dart';
 import '../models/repositories/auth_repository.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../viewmodels/home_schedule_viewmodel.dart';

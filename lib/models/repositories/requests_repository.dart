@@ -1,125 +1,42 @@
 import 'dart:convert';
-
-import 'package:http/http.dart' as http;
-
-import '../../config/constants.dart';
-import '../usuario.dart';
+import '../entities/usuario.dart';
+import '../data/external/web_service.dart';
 
 class RequestsRepository {
-  Future<List<Usuario>> getRequests(String userId) async {
-    final response = await http.get(
-      Uri.parse('${Config.baseUrl}/usuarios/$userId/solicitudes'),
-      headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
+  final WebService _webService;
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => Usuario.fromJson(json)).toList();
-    } else {
-      throw Exception('No se pudieron obtener las solicitudes.');
-    }
+  RequestsRepository({WebService? webService})
+      : _webService = webService ?? WebService();
+
+  Future<List<Usuario>> getRequests(String userId) async {
+    final rawJson = await _webService.fetchRequests(userId);
+    final List<dynamic> data = jsonDecode(rawJson);
+    return data.map((json) => Usuario.fromJson(json)).toList();
   }
 
   Future<void> acceptRequest({
     required String currentUserId,
     required String senderUserId,
-  }) async {
-    final response = await http.post(
-      Uri.parse(
-        '${Config.baseUrl}/usuarios/$currentUserId/solicitudes/$senderUserId/aceptar',
-      ),
-      headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
-
-    if (response.statusCode < 200) {
-      throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be accepted.');
-    }
-  }
+  }) => _webService.acceptRequest(currentUserId, senderUserId);
 
   Future<void> rejectRequest({
     required String currentUserId,
     required String senderUserId,
-  }) async {
-    final response = await http.post(
-      Uri.parse(
-        '${Config.baseUrl}/usuarios/$currentUserId/rechazarsolicitud/$senderUserId',
-      ),
-      headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
-
-    if (response.statusCode < 200) {
-      throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be rejected.');
-    }
-  }
-  Future<String?> findUserIdByUsername(String username) async {
-    final response = await http.get(
-      Uri.parse('${Config.baseUrl}/usuarios/codigo/username/$username'),
-      headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
-
-    if (response.statusCode == 200) {
-      final body = response.body.trim();
-
-      if (body.isEmpty || body == 'null') {
-        return null;
-      }
-
-      return body.replaceAll('"', '');
-    } else if (response.statusCode == 404) {
-      return null;
-    } else {
-      throw Exception(jsonDecode(response.body)['message'] ?? 'The user could not be found.');
-    }
-  }
+  }) => _webService.rejectRequest(currentUserId, senderUserId);
 
   Future<Usuario?> findUserByUsername(String username) async {
-    final userId = await findUserIdByUsername(username);
+    final userId = await _webService.fetchUserIdByUsername(username);
+    if (userId == null || userId.isEmpty) return null;
 
-    if (userId == null || userId.isEmpty) {
-      return null;
-    }
-
-    final response = await http.get(
-      Uri.parse('${Config.baseUrl}/usuarios/$userId'),
-      headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
-
-    if (response.statusCode == 200) {
-      return Usuario.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception(jsonDecode(response.body)['message'] ?? 'The user could not be found.');
-    }
+    final rawJson = await _webService.fetchUserDetail(userId);
+    return Usuario.fromJson(jsonDecode(rawJson));
   }
 
   Future<void> sendRequest({
     required String targetUserId,
     required String senderUserId,
-  }) async {
-    final response = await http.post(
-      Uri.parse(
-        '${Config.baseUrl}/usuarios/$targetUserId/solicitudes/$senderUserId',
-      ),
-      headers: {'Content-Type': 'application/json'},
-    ).timeout(const Duration(seconds: 10));
+  }) => _webService.sendRequest(targetUserId, senderUserId);
 
-    if (response.statusCode != 200) {
-      throw Exception(jsonDecode(response.body)['message'] ?? 'The friend request could not be sent.');
-    }
-  }
-
-  Future<void> trackEvent(String event, String userId) async {
-    final body = {
-      "Evento": event,
-      "FechaActividad": DateTime.now().toIso8601String(),
-      "IdUsuario": userId,
-      "Plataforma": "Flutter",
-    };
-
-    http.post(
-      Uri.parse('${Config.baseUrl}/MetricaFriends/nuevo'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
-    );
-  }
-  
+  Future<void> trackEvent(String event, String userId) =>
+      _webService.trackEvent(event, userId);
 }

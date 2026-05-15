@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../models/materia.dart';
+import '../models/entities/materia.dart';
 import '../models/repositories/friend_schedule_repository.dart';
 import 'schedule_viewmodel.dart';
 

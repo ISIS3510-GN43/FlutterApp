@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/usuario.dart';
+import '../models/entities/usuario.dart';
 import '../viewmodels/requests_viewmodel.dart';
 
 

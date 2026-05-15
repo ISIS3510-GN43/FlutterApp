@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../../config/constants.dart';
-import '../usuario.dart';
+import '../entities/usuario.dart';
 
 class PhotoUrlResult implements Exception {
   final String url;

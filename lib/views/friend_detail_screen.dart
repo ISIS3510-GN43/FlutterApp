@@ -4,10 +4,10 @@ import '../models/repositories/schedule_repository.dart';
 import '../viewmodels/friend_schedule_viewmodel.dart';
 import '../viewmodels/match_schedule_viewmodel.dart';
 import 'calendar_view.dart';
-import '../models/usuario.dart';
+import '../models/entities/usuario.dart';
 import 'app_nav.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../cache/profile_image_cache_manager.dart';
+import '../models/data/cache/profile_image_cache_manager.dart';
 import '../viewmodels/friend_detail_viewmodel.dart';
 
 
@@ -104,7 +104,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                             onPressed: _viewModel.isLoading
                                 ? null
                                 : () => _viewModel.sendLocation(
-                                      userId: widget.userId,
+                                      currentId: widget.userId,
                                       friendGmail: widget.friend.gmail,
                                       friendUsername: widget.friend.username,
                                     ),
@@ -152,11 +152,11 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                             padding: const EdgeInsets.only(top: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(Icons.check_circle_outline, size: 14, color: Colors.green),
                                 SizedBox(width: 6),
                                 Text(
-                                  'Location sent!',
+                                  'Location sent to ${widget.friend.gmail}',
                                   style: TextStyle(fontSize: 12, color: Colors.green),
                                 ),
                               ],
@@ -221,7 +221,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                                     if (myHorario.id.isEmpty || friendHorario.id.isEmpty) {
                                       ScaffoldMessenger.of(ctx).showSnackBar(
                                         const SnackBar(
-                                          content: Text('No se pudo preparar el match de horarios.'),
+                                          content: Text('The scheduling could not be arranged.'),
                                         ),
                                       );
                                       return;

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../models/repositories/friend_detail_repository.dart';
+import 'dart:convert';
 
 enum SendLocationState { idle, loading, success, noConnection, error }
 
 class FriendDetailViewModel extends ChangeNotifier {
+
   final FriendDetailRepository _repository;
 
-  FriendDetailViewModel({FriendDetailRepository? repository})
-      : _repository = repository ?? FriendDetailRepository();
+  FriendDetailViewModel({
+    FriendDetailRepository? repository,
+  }) : _repository = repository ?? FriendDetailRepository();
 
   SendLocationState _sendState = SendLocationState.idle;
   String _errorMessage = '';
@@ -19,8 +21,9 @@ class FriendDetailViewModel extends ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get isLoading => _sendState == SendLocationState.loading;
 
+
   Future<void> sendLocation({
-    required String userId,
+    required String currentId,
     required String friendGmail,
     required String friendUsername,
   }) async {
@@ -29,7 +32,7 @@ class FriendDetailViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final currentUsername = await _repository.getCurrentUsername(userId);
+      final currentUsername = await _repository.getCurrentUsername(currentId);
       if (!await Geolocator.isLocationServiceEnabled()) {
         throw Exception('Location services are disabled.');
       }
